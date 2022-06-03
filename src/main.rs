@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 use reqwest;
 use std::env;
 
