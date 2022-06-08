@@ -3,31 +3,27 @@
 use reqwest;
 use std::env;
 
-static SHOULD_PRINT: bool = true;
-
-macro_rules! print {
-    ($($arg:tt)*) => {{
-        if SHOULD_PRINT { std::print!($($arg)*) }
-    }};
-}
-
-macro_rules! error {
-    ($($arg:tt)*) => {{
-        if SHOULD_PRINT { std::eprint!("\n[Error] {}", std::format!($($arg)*)) }
-        std::process::exit(1);
-    }};
-}
+mod log;
 
 fn main() {
-    print!("ログインしています。\n");
+    let logger = log::Log::new();
+    macro_rules! exit_with_record_error {
+        ($($arg:tt)*) => {{
+            logger.record_error(&std::format!($($arg)*));
+            logger.save();
+            std::process::exit(1);
+        }};
+    }
+
+    logger.record_info("ログインしています。");
 
     let user_id = match env::var("TMGW_ID") {
         Ok(s) => s,
-        Err(_) => error!("環境変数 TMGW_ID を定義してください。"),
+        Err(_) => exit_with_record_error!("環境変数 TMGW_ID を定義してください。"),
     };
     let user_password = match env::var("TMGW_PASSWORD") {
         Ok(s) => s,
-        Err(_) => error!("環境変数 TMGW_PASSWORD を定義してください。\n"),
+        Err(_) => exit_with_record_error!("環境変数 TMGW_PASSWORD を定義してください。"),
     };
 
     let url = "https://dhcp.tamagawa.ac.jp/index.cgi";
@@ -41,18 +37,20 @@ fn main() {
         .send()
     {
         Ok(r) => r,
-        Err(e) => error!("ログインページへの接続に失敗しました。\n詳細: {}\n", e),
+        Err(e) => exit_with_record_error!("ログインページへの接続に失敗しました。詳細: {}", e),
     };
 
     let res_body_str = match res.text_with_charset("EUC-JP") {
         Ok(s) => s,
-        Err(_) => error!("サーバからのメッセージに不適切なバイト列が含まれています。"),
+        Err(_) => {
+            exit_with_record_error!("サーバからのメッセージに不適切なバイト列が含まれています。")
+        }
     };
     if res_body_str.contains("認証に成功しました。") {
-        print!("ログインが完了しました。\n");
+        logger.record_info("ログインが完了しました。");
     } else if res_body_str.contains("ユーザ名かパスワードが間違っています。") {
-        error!("IDまたはパスワードが異なります。\n")
+        exit_with_record_error!("IDまたはパスワードが異なります。")
     } else {
-        error!("非予期のエラーが発生しました。\n")
+        exit_with_record_error!("非予期のエラーが発生しました。")
     }
 }
