@@ -3,6 +3,8 @@ use std::env;
 
 mod log;
 
+const URL: &str = "https://dhcp.tamagawa.ac.jp/index.cgi";
+
 fn main() {
     let logger = log::Log::new();
     macro_rules! exit_with_record_error {
@@ -24,12 +26,11 @@ fn main() {
         Err(_) => exit_with_record_error!("環境変数 TMGW_PASSWORD を定義してください。"),
     };
 
-    let url = "https://dhcp.tamagawa.ac.jp/index.cgi";
     let post_form_data = [("STAT", "1"), ("USER", &user_id), ("PASS", &user_password)];
 
     let client = reqwest::blocking::Client::new();
     let res = match client
-        .post(url)
+        .post(URL)
         .form(&post_form_data)
         .timeout(std::time::Duration::from_secs(6))
         .send()
