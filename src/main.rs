@@ -53,4 +53,6 @@ fn main() {
     } else {
         exit_with_record_error!("非予期のエラーが発生しました。")
     }
+
+    logger.save();
 }
