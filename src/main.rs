@@ -4,6 +4,7 @@ use std::env;
 mod log;
 
 const URL: &str = "https://dhcp.tamagawa.ac.jp/index.cgi";
+const TIMEOUT_SECS: u64 = 6;
 
 fn main() {
     let logger = log::Log::new();
@@ -32,7 +33,7 @@ fn main() {
     let res = match client
         .post(URL)
         .form(&post_form_data)
-        .timeout(std::time::Duration::from_secs(6))
+        .timeout(std::time::Duration::from_secs(TIMEOUT_SECS))
         .send()
     {
         Ok(r) => r,
