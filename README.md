@@ -1,4 +1,4 @@
-# TMGW WiFi Autholizer
+# TMGW WiFi Authorizer
 
 ## 概要
 
@@ -7,7 +7,7 @@
 
 ## 使い方
 
-1. [リリースページ](https://github.com/0xNOY/tmgw-wifi-autholizer/releases)から実行ファイルをダウンロードする。
+1. [リリースページ](https://github.com/0xNOY/tmgw-wifi-authorizer/releases)から実行ファイルをダウンロードする。
 
 1. 環境変数 `TMGW_ID` にMyPCアカウントのIDを、環境変数 `TMGW_PASSWORD` にMyPCアカウントのパスワードを設定する。
 
@@ -32,7 +32,7 @@
 1. メニューバーの `操作` > `タスクの作成` をクリックする。
 
 1. 名前を分かり易いものに変更する。  
-    例) `TMGW WiFi Autholizer`
+    例) `TMGW WiFi Authorizer`
 
 1. 同ウィンドウのタブ `トリガー` > `新規` をクリックする。
 
@@ -55,4 +55,4 @@
 
 ## ライセンス
 
-TMGW WiFi Autholizer は [Apache License, Version 2.0](https://github.com/0xNOY/tmgw-wifi-autholizer/blob/main/LICENSE) に基づいて公開されています。
+TMGW WiFi Authorizer は [Apache License, Version 2.0](https://github.com/0xNOY/tmgw-wifi-authorizer/blob/main/LICENSE) に基づいて公開されています。
