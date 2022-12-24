@@ -33,7 +33,7 @@ fn main() {
             ColorChoice::Auto,
         ),
         WriteLogger::new(
-            LevelFilter::Off,
+            LevelFilter::Trace,
             simplelog::Config::default(),
             match File::create(LOG_FILE_PATH.clone()) {
                 Ok(f) => f,
