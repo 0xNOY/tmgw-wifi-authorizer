@@ -3,7 +3,12 @@ use log::{error, info};
 use once_cell::sync::Lazy;
 use reqwest;
 use simplelog::{ColorChoice, CombinedLogger, LevelFilter, TermLogger, TerminalMode, WriteLogger};
-use std::{env, fs::File, path::PathBuf, process::exit};
+use std::{
+    env,
+    fs::{create_dir_all, File},
+    path::PathBuf,
+    process::exit,
+};
 
 const URL: &str = "https://dhcp.tamagawa.ac.jp/index.cgi";
 const TIMEOUT_SECS: u64 = 6;
@@ -15,6 +20,11 @@ static APP_DATA_DIR_PATH: Lazy<PathBuf> = Lazy::new(|| match dirs::home_dir() {
 static LOG_FILE_PATH: Lazy<PathBuf> = Lazy::new(|| APP_DATA_DIR_PATH.join("log.txt"));
 
 fn main() {
+    match create_dir_all(APP_DATA_DIR_PATH.clone()) {
+        Ok(_) => (),
+        Err(e) => panic!("データディレクトリの作成に失敗しました。詳細: {}", e),
+    };
+
     match CombinedLogger::init(vec![
         TermLogger::new(
             LevelFilter::Info,
