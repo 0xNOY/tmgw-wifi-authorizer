@@ -23,7 +23,7 @@ fn main() {
     match create_dir_all(APP_DATA_DIR_PATH.clone()) {
         Ok(_) => (),
         Err(e) => panic!("データディレクトリの作成に失敗しました。詳細: {}", e),
-    };
+    }
 
     match CombinedLogger::init(vec![
         TermLogger::new(
@@ -85,10 +85,11 @@ fn main() {
             exit(1)
         }
     };
+
     if res_body_str.contains("認証に成功しました。") {
         info!("ログインが完了しました。");
     } else if res_body_str.contains("ユーザ名かパスワードが間違っています。") {
-        error!("IDまたはパスワードが異なります。");
+        error!("IDまたはパスワードが間違っています。");
         exit(1)
     } else {
         error!("非予期のエラーが発生しました。");
