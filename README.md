@@ -55,7 +55,7 @@
 
 #### Linuxでの手順
 
-`NetworkManager`の`dispatcher`利用します。それについての詳細は [NetworkManager dispatcher を使用したネットワークサービス](https://wiki.archlinux.jp/index.php/NetworkManager#NetworkManager_dispatcher_.E3.82.92.E4.BD.BF.E7.94.A8.E3.81.97.E3.81.9F.E3.83.8D.E3.83.83.E3.83.88.E3.83.AF.E3.83.BC.E3.82.AF.E3.82.B5.E3.83.BC.E3.83.93.E3.82.B9) を参照してください。
+`NetworkManager`の`dispatcher`を利用します。それについての詳細は [NetworkManager dispatcher を使用したネットワークサービス](https://wiki.archlinux.jp/index.php/NetworkManager#NetworkManager_dispatcher_.E3.82.92.E4.BD.BF.E7.94.A8.E3.81.97.E3.81.9F.E3.83.8D.E3.83.83.E3.83.88.E3.83.AF.E3.83.BC.E3.82.AF.E3.82.B5.E3.83.BC.E3.83.93.E3.82.B9) を参照してください。
 
 
 ## コンタクト
