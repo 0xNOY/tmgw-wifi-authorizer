@@ -1,6 +1,6 @@
 use clap::Parser;
 use dirs;
-use log::{error, info};
+use log::{debug, error, info, warn};
 use once_cell::sync::Lazy;
 use reqwest;
 use simplelog::{ColorChoice, CombinedLogger, LevelFilter, TermLogger, TerminalMode, WriteLogger};
@@ -13,7 +13,7 @@ use std::{
 
 static APP_DATA_DIR_PATH: Lazy<PathBuf> = Lazy::new(|| match dirs::home_dir() {
     Some(d) => d.join(".tmgw-wifi-authorizer"),
-    None => panic!("ホームディレクトリのパスを取得できません。"),
+    None => panic!("Failed to get home directory."),
 });
 
 #[derive(Debug, Parser)]
@@ -25,15 +25,15 @@ static APP_DATA_DIR_PATH: Lazy<PathBuf> = Lazy::new(|| match dirs::home_dir() {
     arg_required_else_help = true
 )]
 struct Args {
-    // MyPCアカウントのID
+    // ID of MyPCAccount
     #[arg(short = 'n', long, env = "TMGW_ID")]
-    user_id: String,
+    tmgw_id: String,
 
-    // MyPCアカウントのパスワード
+    // password of MyPCAcount
     #[arg(short = 'p', long, env = "TMGW_PASSWORD")]
-    user_password: String,
+    tmgw_password: String,
 
-    // 認証サーバのURL
+    // URL of authentication page
     #[arg(
         short = 'u',
         long,
@@ -41,15 +41,15 @@ struct Args {
     )]
     url: String,
 
-    // タイムアウト時間(秒)
+    // Timeout seconds
     #[arg(short = 't', long, default_value = "6")]
     timeout_secs: u64,
 
-    // データディレクトリのパス
+    // app data directory path
     #[arg(short = 'd', long, default_value = APP_DATA_DIR_PATH.to_str().unwrap())]
     data_dir_path: PathBuf,
 
-    // ログファイルの名前
+    // log file name
     #[arg(short = 'l', long, default_value = "log.txt")]
     log_file_name: String,
 }
@@ -59,7 +59,7 @@ fn main() {
 
     match create_dir_all(APP_DATA_DIR_PATH.clone()) {
         Ok(_) => (),
-        Err(e) => panic!("データディレクトリの作成に失敗しました。詳細: {}", e),
+        Err(e) => panic!("Failed to create app data directory. Details: {}", e),
     }
 
     let log_file_path = args.data_dir_path.join(args.log_file_name);
@@ -80,30 +80,30 @@ fn main() {
                 .open(log_file_path)
             {
                 Ok(f) => f,
-                Err(e) => panic!("ログファイルの作成・書き込みに失敗しました。詳細: {}", e),
+                Err(e) => panic!("Failed to open log file. Details: {}", e),
             },
         ),
     ]) {
         Ok(_) => (),
-        Err(e) => panic!("ロガーの初期化に失敗しました。詳細: {}", e),
+        Err(e) => panic!("Failed to initialize logger. Details: {}", e),
     }
 
-    info!("ログインしています。");
-
-    if args.user_id.is_empty() {
-        error!("環境変数 TMGW_ID を定義してください。");
+    if args.tmgw_id.is_empty() {
+        warn!("TMGW_ID is empty. Please set environment variable TMGW_ID or use -n option.")
+    } else {
+        debug!("TMGW_ID: {}", args.tmgw_id);
     }
-    if args.user_password.is_empty() {
-        error!("環境変数 TMGW_PASSWORD を定義してください。");
+    if args.tmgw_password.is_empty() {
+        warn!("TMGW_PASSWORD is empty. Please set environment variable TMGW_PASSWORD or use -p option.")
     }
-    if args.user_id.is_empty() || args.user_password.is_empty() {
+    if args.tmgw_id.is_empty() || args.tmgw_password.is_empty() {
         exit(1);
     }
 
     let form_data = [
         ("STAT", "1"),
-        ("USER", &args.user_id),
-        ("PASS", &args.user_password),
+        ("USER", &args.tmgw_id),
+        ("PASS", &args.tmgw_password),
     ];
 
     let client = reqwest::blocking::Client::new();
@@ -115,7 +115,7 @@ fn main() {
     {
         Ok(r) => r,
         Err(e) => {
-            error!("ログインページへの接続に失敗しました。詳細: {}", e);
+            error!("Failed to send request. Details: {}", e);
             exit(1)
         }
     };
@@ -123,18 +123,18 @@ fn main() {
     let res_body_str = match res.text_with_charset("EUC-JP") {
         Ok(s) => s,
         Err(_) => {
-            error!("サーバからのメッセージに不適切なバイト列が含まれています。");
+            error!("Find invalid character in response body.");
             exit(1)
         }
     };
 
     if res_body_str.contains("認証に成功しました。") {
-        info!("ログインが完了しました。");
+        info!("Successfully authenticated.");
     } else if res_body_str.contains("ユーザ名かパスワードが間違っています。") {
-        error!("IDまたはパスワードが間違っています。");
+        error!("User ID or password is incorrect.");
         exit(1)
     } else {
-        error!("非予期のエラーが発生しました。");
+        error!("An unexpected error has occurred.");
         exit(1)
     }
 }
