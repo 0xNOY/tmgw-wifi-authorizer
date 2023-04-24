@@ -11,6 +11,9 @@ use std::{
     process::exit,
 };
 
+const TMGW_ID_ENV_KEY: &str = "TMGW_ID";
+const TMGW_PASSWORD_ENV_KEY: &str = "TMGW_PASSWORD";
+
 static APP_DATA_DIR_PATH: Lazy<PathBuf> = Lazy::new(|| match dirs::home_dir() {
     Some(d) => d.join(".tmgw-wifi-authorizer"),
     None => panic!("Failed to get home directory."),
@@ -26,11 +29,11 @@ static APP_DATA_DIR_PATH: Lazy<PathBuf> = Lazy::new(|| match dirs::home_dir() {
 )]
 struct Args {
     // ID of MyPCAccount
-    #[arg(short = 'n', long, env = "TMGW_ID")]
+    #[arg(short = 'n', long, env = TMGW_ID_ENV_KEY)]
     tmgw_id: String,
 
     // password of MyPCAcount
-    #[arg(short = 'p', long, env = "TMGW_PASSWORD")]
+    #[arg(short = 'p', long, env = TMGW_PASSWORD_ENV_KEY)]
     tmgw_password: String,
 
     // URL of authentication page
@@ -89,12 +92,18 @@ fn main() {
     }
 
     if args.tmgw_id.is_empty() {
-        warn!("TMGW_ID is empty. Please set environment variable TMGW_ID or use -n option.")
+        warn!(
+            "{} is empty. Please set environment variable {} or use -n option.",
+            TMGW_ID_ENV_KEY, TMGW_ID_ENV_KEY
+        );
     } else {
         debug!("TMGW_ID: {}", args.tmgw_id);
     }
     if args.tmgw_password.is_empty() {
-        warn!("TMGW_PASSWORD is empty. Please set environment variable TMGW_PASSWORD or use -p option.")
+        warn!(
+            "{} is empty. Please set environment variable {} or use -p option.",
+            TMGW_PASSWORD_ENV_KEY, TMGW_PASSWORD_ENV_KEY
+        );
     }
     if args.tmgw_id.is_empty() || args.tmgw_password.is_empty() {
         exit(1);
