@@ -21,8 +21,8 @@ jobs:
         - run: cargo build --release --target $TARGET
         - uses: actions/upload-artifact@v3
           with:
-            name: $TARGET
-            path: target/$TARGET/release/$APP_NAME
+            name: ${{ env.TARGET }}
+            path: target/${{ env.TARGET }}/release/${{ env.APP_NAME }}.exe
 
     build-for-windows:
         name: Build for Windows
@@ -36,8 +36,8 @@ jobs:
         - run: cargo build --release --target $env:TARGET
         - uses: actions/upload-artifact@v3
           with:
-            name: $TARGET
-            path: target/$TARGET/release/$APP_NAME.exe
+            name: ${{ env.TARGET }}
+            path: target/${{ env.TARGET }}/release/${{ env.APP_NAME }}.exe
 
     build-for-macos:
         name: Build for macOS
@@ -51,5 +51,5 @@ jobs:
         - run: cargo build --release --target $TARGET
         - uses: actions/upload-artifact@v3
           with:
-            name: $TARGET
-            path: target/$TARGET/release/$APP_NAME
+            name: ${{ env.TARGET }}
+            path: target/${{ env.TARGET }}/release/${{ env.APP_NAME }}.exe
