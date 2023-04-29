@@ -33,7 +33,7 @@ jobs:
 
         steps:
         - uses: actions/checkout@v3
-        - run: cargo build --release --target $TARGET
+        - run: cargo build --release --target $env:TARGET
         - uses: actions/upload-artifact@v3
           with:
             name: $TARGET
