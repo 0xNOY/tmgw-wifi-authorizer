@@ -22,7 +22,7 @@ jobs:
         - uses: actions/upload-artifact@v3
           with:
             name: ${{ env.TARGET }}
-            path: target/${{ env.TARGET }}/release/${{ env.APP_NAME }}.exe
+            path: target/${{ env.TARGET }}/release/${{ env.APP_NAME }}
 
     build-for-windows:
         name: Build for Windows
@@ -52,4 +52,4 @@ jobs:
         - uses: actions/upload-artifact@v3
           with:
             name: ${{ env.TARGET }}
-            path: target/${{ env.TARGET }}/release/${{ env.APP_NAME }}.exe
+            path: target/${{ env.TARGET }}/release/${{ env.APP_NAME }}
